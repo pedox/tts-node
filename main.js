@@ -1,6 +1,6 @@
 var words = [
-	'ilustrasi',
-	'elonmusk',
+	'balikpapan',
+	'guna',
 ];
 
 var tts = []
@@ -29,27 +29,26 @@ while(words.length > 0) {
 	} else {
 		found = false
 		currPointer = 0
-		for(var i = 0; i < (tts.length > tts[0].length ? tts.length : tts[0].length); i++) {
+		for(var y = 0; y < (tts.length > tts[0].length ? tts.length : tts[0].length); y++) {
 			if(found == true) {
 
-			} else if(typeof tts[i] !== "undefined") {
-				for(var j = 0; j < (tts.length > tts[0].length ? tts.length : tts[0].length); j++) {
-					if(typeof tts[i][j] !== "undefined") {
-						var loc = words[0].indexOf(tts[i][j].char)
+			} else if(typeof tts[y] !== "undefined") {
+				for(var x = 0; x < (tts.length > tts[0].length ? tts.length : tts[0].length); x++) {
+					if(typeof tts[y][x] !== "undefined") {
+						var loc = words[0].indexOf(tts[y][x].char)
 						if(found == false) {
 							if(loc >= 0) {
-								// console.log(`FOUND WORD POS x${j} y${i} ${tts[i][j].word_horz} ${words[0]} ${loc}`)
-								if(typeof tts[i][j].word_horz == "undefined") {
+								if(typeof tts[y][x].word_horz == "undefined") {
 									//VERTICAL
-									moveTo(tts[i][j].vert_index, null, loc)
-									place(words[0], j, i, 0)
+									console.log(`set horizontal virtuoso ${tts[y][x].char} ${words[0]} ${tts[y][x].char} ${x} ${y}`)
+									moveTo(tts[y][x].vert_index, null, loc)
+									place(words[0], x-loc, y, 0)
 								} else {
 									//HORZ
-									// console.log(`set vertical virtuoso ${words[0]} ${tts[i][j].char}`)
-									moveTo(tts[i][j].horz_index, null, loc)
-									place(words[0], j, i, 1)
+									console.log(`set vertical virtuoso ${tts[y][x].char} ${words[0]} ${tts[y][x].char} ${x} ${y}`)
+									moveTo(tts[y][x].horz_index, null, loc)
+									place(words[0], x, y, 1)
 								}
-								// console.log(tts)
 								found = true;
 							}
 						}
@@ -60,7 +59,6 @@ while(words.length > 0) {
  	}
 	words.splice(0, 1)
 }
-//
 
 function debug() {
 	//DEBUG
@@ -83,6 +81,7 @@ function debug() {
 
 debug()
 
+console.log(tts)
 console.log(words_tmp)
 
 function moveTo(index, xMove, yMove) {
@@ -122,21 +121,36 @@ function place(wrd, x, y, dir = 0, editIndex = false) {
 		//HORZ
 		for(var i = 0; i < wrd.length + x; i++) {
 			if(typeof tts[y] == "undefined") tts[y] = []
-			tts[y][x+i] = {
-				char: wrd[i], 
-				word_horz: wrd, 
-				horz_index: words_tmp.length-1
-			};
+
+			if(typeof tts[y][x+i] !== "undefined") {
+				tts[y][x+i].horz_index = words_tmp.length-1;
+				tts[y][x+i].word_horz = wrd;
+			} else {
+				tts[y][x+i] = {
+					char: wrd[i], 
+					word_horz: wrd, 
+					horz_index: words_tmp.length-1,
+					x: x+i,
+					y: y
+				};
+			}
 		}
 	} else {
 		//VERT
 		for(var i = 0; i < wrd.length + y; i++) {
 			if(typeof tts[y+i] == "undefined") tts[y+i] = []
-			tts[y+i][x] = {
-				char: wrd[i], 
-				word_vert: wrd, 
-				vert_index: words_tmp.length-1
-			};
+			if(typeof tts[y+i][x] !== "undefined") {
+				tts[y+i][x].vert_index = words_tmp.length-1;
+				tts[y+i][x].word_vert = wrd;
+			} else {
+				tts[y+i][x] = {
+					char: wrd[i], 
+					word_vert: wrd, 
+					vert_index: words_tmp.length-1,
+					x: x,
+					y: y+i
+				};
+			}
 		}
 	}
 }
